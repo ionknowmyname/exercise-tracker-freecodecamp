@@ -22,6 +22,10 @@ const connection = mongoose.connection;
 connection.on('error', console.error.bind(console, 'Connnection  error: '));
 connection.once('open', () => {
   console.log("MongoDB connected successfully");
+
+  app.listen(port, () => {
+    console.log('Your app is listening on port ' + port)
+  })
 })
 
 
@@ -235,6 +239,6 @@ app.get('/api/users/:_id/logs', async (req, res) => {
 
 
 
-const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log('Your app is listening on port ' + listener.address().port)
-})
+// const listener = app.listen(process.env.PORT || 3000, () => {
+//   console.log('Your app is listening on port ' + listener.address().port)
+// })
