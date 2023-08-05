@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 // Middleware error handling
 app.use((err, req, res, next) => {
@@ -74,6 +74,10 @@ let exerciseSchema = new mongoose.Schema({
       type: String,
       required: true
   },
+  username: {
+    type: String,
+    required: true
+},
   description: {
       type: String,
       required: true
@@ -152,7 +156,7 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   let duration = req.body.duration;
   let date = req.body.date;
   if (!date) {
-    date = new Date(date).toISOString().substring(0, 10);;
+    date = new Date().toISOString().substring(0, 10);;
   }
 
   try {
@@ -161,6 +165,7 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
     if(user) {
       let newExercise = new Exercise({
           userId: user._id,
+          username: user.username,
           description: description,
           duration: duration,
           date: date
@@ -170,8 +175,8 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
       newExercise.save()
       .then((createdExercise) => {
         res.json({
-          _id: user._id,
-          username: user.username,
+          _id: createdExercise.userId,
+          username: createdExercise.username,
           date: createdExercise.date.toDateString(),
           duration: createdExercise.duration,
           description: createdExercise.description,          
