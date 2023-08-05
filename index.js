@@ -151,6 +151,9 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   let description = req.body.description;
   let duration = req.body.duration;
   let date = req.body.date;
+  if (!date) {
+    date = new Date(date).toISOString().substring(0, 10);;
+  }
 
   try {
     const user = await User.findById(userId);
@@ -159,20 +162,19 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
       let newExercise = new Exercise({
           userId: user._id,
           description: description,
-          duration: duration
+          duration: duration,
+          date: date
       });
-      if (date.length > 0) {
-          newExercise.date = new Date(date);
-      }
+      
 
       newExercise.save()
       .then((createdExercise) => {
         res.json({
           _id: user._id,
-          description: createdExercise.description,
-          duration: createdExercise.duration,
-          date: createdExercise.date,
           username: user.username,
+          date: createdExercise.date.toDateString(),
+          duration: createdExercise.duration,
+          description: createdExercise.description,          
         });
       }).catch((err) => {
         console.log(err);
